@@ -1,0 +1,83 @@
+package com.jjsj.mall.pub.controller;
+
+import com.jjsj.common.CommonResult;
+import com.jjsj.utils.RedisUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+
+/**
+ * 后台管理员表 前端控制器 
+ */
+@Slf4j
+@RestController
+@RequestMapping("api/public/test/redis")
+@Api(tags = "Redis测试操作")
+public class RedisTestController {
+
+    @Autowired
+    private RedisUtil redisUtil;
+
+
+    /**
+     * 新增
+     *
+     * @param key string key
+     * @param value string value
+     *  @author kepler
+     * @since 2020-04-13
+     */
+    @ApiOperation(value = "新增")
+    @RequestMapping(value = "/set", method = RequestMethod.POST)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "key", value = "redis key"),
+        @ApiImplicitParam(name = "value", value = "内容"),
+    })
+    public CommonResult<Object> set(@RequestParam(name = "key", required = true) String key,
+        @RequestParam(name = "value", required = true) String value) {
+        redisUtil.set(key, value);
+        Object val = redisUtil.get(key);
+        return CommonResult.success(val);
+    }
+
+    /**
+     * 查询
+     *
+     * @param key string key
+     *  @author kepler
+     * @since 2020-04-13
+     */
+    @ApiOperation(value = "查询")
+    @RequestMapping(value = "/get", method = RequestMethod.GET)
+    @ApiImplicitParam(name = "key", value = "redis key")
+    public CommonResult<Object> get(@RequestParam(name = "key", required = true) String key) {
+        Object value = redisUtil.get(key);
+        return CommonResult.success(value);
+    }
+
+    /**
+     * 删除
+     *
+     * @param key string key
+     *  @author kepler
+     * @since 2020-04-13
+     */
+    @ApiOperation(value = "删除")
+    @RequestMapping(value = "/delete", method = RequestMethod.GET)
+    @ApiImplicitParam(name = "key", value = "redis key")
+    public CommonResult<Object> delete(@RequestParam(name = "key", required = true) String key) {
+        redisUtil.remove(key);
+        return CommonResult.success();
+    }
+}
+
+
+
